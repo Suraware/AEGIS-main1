@@ -1,5 +1,4 @@
 {
-  "rootDirectory": "health-platform",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
