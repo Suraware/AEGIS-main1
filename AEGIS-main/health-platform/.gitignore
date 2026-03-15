@@ -1,0 +1,63 @@
+# =============================================================================
+# AEGIS Health Platform — .gitignore
+# =============================================================================
+
+# ---- Environment / secrets (NEVER commit these) ----------------------------
+.env
+.env.local
+.env.*.local
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+frontend/.env.staging
+
+# Keep the example templates
+!.env.example
+!frontend/.env.example
+
+# ---- Node / Frontend -------------------------------------------------------
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+
+# ---- Java / Maven ----------------------------------------------------------
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+hs_err_pid*
+
+# ---- IDE -------------------------------------------------------------------
+.idea/
+*.iml
+.vscode/settings.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ---- OS -------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Terraform -------------------------------------------------------------
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/*.tfvars
+!terraform/*.tfvars.example
+terraform/.terraform.lock.hcl
+
+# ---- Docker ----------------------------------------------------------------
+docker-compose.override.yml
+
+# ---- Misc ------------------------------------------------------------------
+*.tmp
+*.bak
+tmpclaude-*

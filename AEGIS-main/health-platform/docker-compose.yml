@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: health_user
+      POSTGRES_PASSWORD: health_password
+      POSTGRES_DB: health_db
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # Microservices
+  auth-service:
+    build: ./services/auth-service
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/aegis_auth
+      SPRING_DATA_REDIS_HOST: redis
+      JWT_SECRET: ${JWT_SECRET}
+
+  user-service:
+    build: ./services/user-service
+    depends_on:
+      - postgres
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/aegis_user
+
+  health-service:
+    build: ./services/health-service
+    depends_on:
+      - postgres
+      - kafka
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/aegis_health
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+
+  alert-service:
+    build: ./services/alert-service
+    depends_on:
+      - postgres
+      - kafka
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/aegis_alert
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+
+  analytics-service:
+    build: ./services/analytics-service
+    depends_on:
+      - postgres
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/aegis_analytics
+      SNOWFLAKE_URL: ${SNOWFLAKE_URL}
+      SNOWFLAKE_USER: ${SNOWFLAKE_USER}
+      SNOWFLAKE_PASSWORD: ${SNOWFLAKE_PASSWORD}

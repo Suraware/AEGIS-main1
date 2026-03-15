@@ -1,0 +1,9 @@
+CREATE TABLE users (
+    id UUID PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    display_name VARCHAR(255),
+    role VARCHAR(50),
+    is_verified BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

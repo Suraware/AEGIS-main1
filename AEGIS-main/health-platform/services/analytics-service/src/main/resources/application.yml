@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: analytics-service
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/aegis_analytics}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+snowflake:
+  url: ${SNOWFLAKE_URL}
+  user: ${SNOWFLAKE_USER}
+  password: ${SNOWFLAKE_PASSWORD}
+  account: ${SNOWFLAKE_ACCOUNT}
+  warehouse: ${SNOWFLAKE_WAREHOUSE}
+  database: ${SNOWFLAKE_DATABASE}
+  schema: ${SNOWFLAKE_SCHEMA}
+
+logging:
+  level:
+    root: INFO
+    com.healthplatform.analytics: DEBUG
